@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>生成一副谷歌地图</title>
+		<style type="text/css">
+			#map{
+				width: 1100px;
+				height:550px;
+				margin: 20px auto;
+				border:1px solid gray;
+			}
+		</style>
+	</head>
+	<body>
+	<div id="map"></div>
+	</body>
+	<script>
+		var map;
+		var chicago = {lat: 41.85, lng: -87.65};
+
+		function CenterControl(controlDiv, map, center) {
+			var control = this;
+			control.center_ = center;
+			controlDiv.style.clear = 'both';
+
+			var goCenterUI = document.createElement('div');
+			goCenterUI.id = 'goCenterUI';
+			goCenterUI.title = 'Click to recenter the map';
+			controlDiv.appendChild(goCenterUI);
+
+			var goCenterText = document.createElement('div');
+			goCenterText.id = 'goCenterText';
+			goCenterText.innerHTML = 'Center Map';
+			goCenterUI.appendChild(goCenterText);
+
+			var setCenterUI = document.createElement('div');
+			setCenterUI.id = 'setCenterUI';
+			setCenterUI.title = 'Click to change the center of the map';
+			controlDiv.appendChild(setCenterUI);
+
+			var setCenterText = document.createElement('div');
+			setCenterText.id = 'setCenterText';
+			setCenterText.innerHTML = 'Set Center';
+			setCenterUI.appendChild(setCenterText);
+
+			goCenterUI.addEventListener('click', function() {
+				var currentCenter = control.getCenter();
+				map.setCenter(currentCenter);
+			});
+
+			setCenterUI.addEventListener('click', function() {
+				var newCenter = map.getCenter();
+				control.setCenter(newCenter);
+			});
+		}
+
+		CenterControl.prototype.center_ = null;
+
+
+		CenterControl.prototype.getCenter = function() {
+			return this.center_;
+		};
+
+		CenterControl.prototype.setCenter = function(center) {
+			this.center_ = center;
+		};
+
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 12,
+				center: chicago
+			});
+
+			var centerControlDiv = document.createElement('div');
+			var centerControl = new CenterControl(centerControlDiv, map, chicago);
+
+			centerControlDiv.index = 1;
+			centerControlDiv.style['padding-top'] = '10px';
+			map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+		}
+	</script>
+	<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&signed_in=true&callback=initMap"	async defer></script>
+</html>

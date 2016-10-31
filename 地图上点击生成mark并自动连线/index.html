@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上点击生成点并且自动连线</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<body onload="initMap()">
+<div id="map"></div>
+</body>
+<script type="text/javascript">
+
+    var poly;
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: {lat: 41.879, lng: -87.624}
+        });
+
+        poly = new google.maps.Polyline({
+            strokeColor: '#000000',
+            strokeOpacity: 1.0,
+            strokeWeight: 3
+        });
+        poly.setMap(map);
+
+        map.addListener('click', addLatLng);
+    }
+
+    function addLatLng(event) {
+        var path = poly.getPath();
+
+        path.push(event.latLng);
+
+        var marker = new google.maps.Marker({
+            position: event.latLng,
+            title: '#' + path.getLength(),
+            map: map
+        });
+    }
+</script>
+</html>

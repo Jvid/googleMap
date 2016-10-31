@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上覆盖照片</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+        .panel{width: 500px;height: 40px;margin: 0 auto -10px;}
+        .panel input{width: 100px;height: 40px;margin-right: 20px;text-align: center;line-height:40px}
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<body onload="initMap()">
+<div class="panel">
+    <input type="button" value="添加图片浮层" class="btn">
+    <input type="button" value="移除图片浮层" class="btn">
+</div>
+
+<div id="map"></div>
+</body>
+<script type="text/javascript">
+    var btns = document.getElementsByClassName('btn');
+    var historicalOverlay;
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: {lat: 40.740, lng: -74.18}
+        });
+
+        var imageBounds = {
+            north: 40.773941,
+            south: 40.712216,
+            east: -74.12544,
+            west: -74.22655
+        };
+
+        historicalOverlay = new google.maps.GroundOverlay(
+                'http://pic.58pic.com/58pic/13/56/73/93S58PIC9RT_1024.jpg',
+                imageBounds);
+
+        btns[0].onclick = function(){
+            historicalOverlay.setMap(map);
+        }
+        btns[1].onclick = function(){
+            historicalOverlay.setMap(null);
+        }
+    }
+
+</script>
+</html>

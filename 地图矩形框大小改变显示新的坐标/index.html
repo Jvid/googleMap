@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画圆</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<body onload="initMap()">
+<div id="map"></div>
+</body>
+<script type="text/javascript">
+    var infoWindow;
+    var rectangle;
+    var map;
+    var ne;
+    var sw;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 11,
+            center: {lat: 33.678, lng: -116.243},
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        });
+
+         rectangle = new google.maps.Rectangle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0,
+            map: map,
+            //矩形的东西南北，经纬度
+            bounds: {
+                north: 33.785,
+                south: 33.671,
+                east: -116.234,
+                west: -116.351
+            },
+            editable:true
+        });
+       infoWindow = new google.maps.InfoWindow();
+
+        showNewRect(event)
+
+        rectangle.addListener('bounds_changed', showNewRect);
+    }
+    //这个获取坐标的方法中只能获取到东北，西南坐标，没有西北，东南的坐标
+    function showNewRect(event) {
+        ne = rectangle.getBounds().getNorthEast();
+        sw = rectangle.getBounds().getSouthWest();
+
+        var contentString = '<b>Rectangle moved.</b><br>' +
+                'New north-east corner: ' + ne.lat() + ', ' + ne.lng() + '<br>' +
+                'New south-west corner: ' + sw.lat() + ', ' + sw.lng();
+
+
+        infoWindow.setContent(contentString);
+        infoWindow.setPosition(ne);
+
+        infoWindow.open(map);
+    }
+</script>
+</html>

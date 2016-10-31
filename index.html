@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>谷歌地图部分功能演示</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding:0;
+            box-sizing: border-box;
+        }
+        ul{
+            width: 1200px;
+            height: 50px;
+            margin: 5px auto 0;
+            list-style: none;
+        }
+        li{
+            float:left;
+            width: 240px;
+            height: 50px;
+            line-height:50px;
+            text-align: center;
+            font-size: 18px;
+            background: rgba(0,0,0,0.5);
+            border-right:1px solid #fff;
+            color: #fff;
+        }
+        li:hover{
+            color:#000;
+            background: rgba(42,126,188,0.5);
+            cursor: pointer;
+        }
+        iframe{
+            width: 1200px;
+            height: 600px;
+            margin: 5px 0 0 76px;
+            border: 1px solid black;
+            vertical-align:center;
+            padding: none;
+        }
+        .content{
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+<ul id="btn">
+    <li>生成一副谷歌地图</li>
+    <li>在地图上打点</li>
+    <li>地图上打点并生成title浮层</li>
+    <li>显示信息框</li>
+    <li>地图打点并跳动和降落</li>
+</ul>
+<iframe src="地图上打点/index.html" frameborder="0" scrolling="no" id="show"></iframe>
+</body>
+<script type="text/javascript">
+    var btn = document.getElementById('btn');
+    var list = document.getElementsByTagName('li');
+    var show = document.getElementById('show');
+    var arr = ['生成地图/index.html','地图上打点/index.html','地图打点并生成title/index.html','显示信息框/index.html','地图打点并跳动/index.html',]
+    for(var i = 0 ; i < list.length ; i++){
+        list[i].index = i;
+    }
+    btn.onclick = function(e){
+        var e = e || event;
+        console.log(e.target.index)
+        show.setAttribute('src',arr[e.target.index])
+    }
+</script>
+</html>

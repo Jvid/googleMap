@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+	html,body{
+		width: 100%;
+		height: 100%;
+	}
+	#googleMap{
+		width: 100%;
+		height: 100%;
+	}
+</style>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false"></script>
+
+<script>
+function initialize()
+{
+	//配置地图
+var mapProp = {
+  center:new google.maps.LatLng(-41.2879744333, 174.73187736669999),
+  zoom:18,
+  mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  
+  //创建地图
+var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+//设置区域边界
+//myTrip是边界的坐标值，把所有的坐标都要用新建坐标的方式保存在一个数组中
+var myTrip=[new google.maps.LatLng(-41.2879744333, 174.73187736669999),new google.maps.LatLng(-41.2879546, 174.732040366700005),new google.maps.LatLng(-41.288279733300001,174.73210995),new google.maps.LatLng(-41.28829955, 174.731946966700008),new google.maps.LatLng(-41.2881911833, 174.731923783300005),new google.maps.LatLng(-41.2880828, 174.731900599999989),new google.maps.LatLng(-41.2879744333, 174.73187736669999)];
+
+//配置边界的样式
+    var flightPath=new google.maps.Polygon({
+      path:myTrip,
+      strokeColor:"#0000FF",
+      strokeOpacity:0.8,
+      strokeWeight:2,
+      fillColor:"#0000FF",
+      fillOpacity:0.4
+      });
+
+        flightPath.setMap(map);
+
+//        flightPath.setMap(null);//取消折线
+    }
+
+// google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+</head>
+
+<body onload="initialize()">
+<div id="googleMap"></div>
+</body>
+</html>
