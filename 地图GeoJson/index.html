@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>生成一副谷歌地图</title>
+		<style type="text/css">
+			#map{
+				width: 1100px;
+				height:550px;
+				margin: 20px auto;
+				border:1px solid gray;
+			}
+		</style>
+	</head>
+	<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+	<body onload="initMap()">
+	<div id="map"></div>
+	</body>
+	<script type="text/javascript">
+		var map;
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 4,
+				center: {lat: -28, lng: 137}
+			});
+			map.data.loadGeoJson('data.json');
+		}
+	</script>
+</html>

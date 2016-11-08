@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画圆</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<body onload="initMap()">
+<div id="map"></div>
+</body>
+<script type="text/javascript">
+    var labelIndex = 0;
+    var latlngArr = [new google.maps.LatLng(-41.2879744333, 174.73187736669999),new google.maps.LatLng(-41.2879546, 174.732040366700005),new google.maps.LatLng(-41.288279733300001,174.73210995),new google.maps.LatLng(-41.28829955, 174.731946966700008),new google.maps.LatLng(-41.2881911833, 174.731923783300005),new google.maps.LatLng(-41.2880828, 174.731900599999989),new google.maps.LatLng(-41.2879744333, 174.73187736669999)];
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: new google.maps.LatLng(-41.2879744333, 174.73187736669999),
+            zoom: 12
+        });
+
+
+    for(var i = 0 ; i < latlngArr.length ; i++){
+        (function(){
+            var latLng = latlngArr[i];
+            var marker = new google.maps.Marker({
+                position: latLng,
+                map: map
+              })
+
+        })(i)
+    }
+
+       // map.addListener('click', function(event) {
+       //      addMarker(event.latLng, map);
+       //  });
+
+
+
+
+
+        // for(var i = 0 ; i < latlngArr.length ; i++){
+        //     (function(){
+        //         var property = hotels[x],
+        //         latLng = new google.maps.LatLng(property.lat, property.lng);
+        //         var marker = new google.maps.Marker({
+        //         position: latLng,
+        //         map: map
+        //       });
+        //     })(i)
+        // }
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+</script>
+</html>

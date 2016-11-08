@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画线</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<body onload="initMap()">
+<div id="map"></div>
+</body>
+<script type="text/javascript">
+
+    //    var poly;
+    var flag = true;
+    var map;
+    var markerArr=[];
+    var arr = [];
+    var makeMark;
+    var chicago = {lat: 41.85, lng: -87.65};
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: {lat: 41.879, lng: -87.624}
+        });
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+
+
+
+        map.addListener('click',makeMark);
+        var image = 'pen.png';
+        function makeMark(event) {
+            var location = event.latLng;
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                icon: image,
+                draggable: true
+            });
+            markerArr.push(marker);
+            var poly = new google.maps.Polyline({
+                strokeColor: '#000000',
+                strokeOpacity: 1.0,
+                strokeWeight: 3
+            });
+            poly.setMap(map);
+
+            var temp
+            var path
+            google.maps.event.addListener(marker, 'dragstart', function(event) {
+                console.log('start');
+                temp = event.latLng;
+            });
+
+            google.maps.event.addListener(marker, 'drag', function(event) {
+//                console.log('drag');
+
+                var a = {};
+                a.lat = event.latLng.lat();
+                a.lng = event.latLng.lng();
+                arr.push(a);
+                path = poly.getPath();
+                path.push(event.latLng);
+            });
+
+            google.maps.event.addListener(marker, 'dragend', function(event) {
+                marker.setMap(null);
+                console.log('dragend');
+                arr.push(arr[0]);
+                var path = poly.getPath();
+                path.push(temp);
+            });
+
+        }
+
+    }
+
+    function CenterControl(controlDiv, map) {
+
+        // Set CSS for the control border.
+        var controlUI = document.createElement('div');
+//        controlUI.addClassName = 'drawDiv';
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginBottom = '22px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Click to recenter the map';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior.
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+        controlText.style.fontSize = '16px';
+        controlText.style.lineHeight = '38px';
+        controlText.style.paddingLeft = '5px';
+        controlText.style.paddingRight = '5px';
+        controlText.innerHTML = 'Center Map';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listeners: simply set the map to Chicago.
+        controlUI.addEventListener('click', function() {
+            map.setCenter(chicago);
+            console.log(arr);
+            for(var i = 0 ; i < markerArr.length ; i++){
+                markerArr[i].setMap(null)
+            }
+//            makeMark = null;
+//            map.setCustomValidity()
+        });
+
+    }
+
+
+
+
+</script>
+</html>

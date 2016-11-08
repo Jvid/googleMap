@@ -28,7 +28,7 @@
 
         addMarker(ctr, map);
 
-        google.maps.event.addListener(map, 'click', function(event) {
+       map.addListener('click', function(event) {
             addMarker(event.latLng, map);
         });
 
@@ -40,5 +40,6 @@
             map: map
         });
     }
+
 </script>
 </html>
