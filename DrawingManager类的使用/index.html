@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drawing tools</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        html, body, #map-canvas {
+            height: 100%;
+            margin: 0px;
+            padding: 0px
+        }
+    </style>
+    <script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false&libraries=drawing" type="text/javascript" charset="utf-8"></script>
+    <script>
+        //初始化
+        function initialize() {
+            //初始化地图参数
+            var mapOptions = {
+                center: new google.maps.LatLng(24.886436490787712, -70.2685546875),
+                zoom: 5,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            //div显示地图
+            var map = new google.maps.Map(document.getElementById('map-canvas'),
+                    mapOptions);
+            //绘画工具 设置
+            var drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.CIRCLE,
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE,
+                        google.maps.drawing.OverlayType.RECTANGLE
+                    ]
+                },
+                markerOptions: {
+                    icon: 'pen.png'
+                },
+                //设置图形显示样式
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    clickable: false,
+                    editable: true,
+                    zIndex: 1
+                },
+
+                polygonOptions: {
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.35,
+                    editable: true,
+                }
+            });
+            drawingManager.setMap(map);
+            drawingPolygon(map);
+            //注册 多边形 绘制完成事件
+            google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+                var array= polygon.getPath().getArray();
+                showLonLat(array);
+            });
+
+//循环显示 经纬度
+            function showLonLat( arr){
+                for(var i=0; i<arr.length;i++){
+                    alert(arr[i]);
+                };
+            }
+
+            /*google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+             if (event.type == google.maps.drawing.OverlayType.CIRCLE) {
+             var radius = event.overlay.getRadius();
+             }
+             });*/
+        }
+
+        //根据以知 点绘制图形
+        function drawingPolygon(map) {
+            var triangleCoords = [
+                new google.maps.LatLng(25.774252, -80.190262),
+                new google.maps.LatLng(18.466465, -66.118292),
+                new google.maps.LatLng(32.321384, -64.75737),
+                new google.maps.LatLng(25.774252, -80.190262)
+            ];
+
+            // Construct the polygon
+            // Note that we don't specify an array or arrays, but instead just
+            // a simple array of LatLngs in the paths property
+            bermudaTriangle = new google.maps.Polygon({
+                paths: triangleCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+                editable: true,
+            });
+
+            bermudaTriangle.setMap(map);
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+</head>
+<body>
+<div id="map-canvas"></div>
+<div id="bottom"></div>
+</body>
+</html>

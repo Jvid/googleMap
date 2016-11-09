@@ -13,8 +13,10 @@
     </style>
 </head>
 <script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-2.1.1.js"></script>
 <body onload="initMap()">
 <div id="map"></div>
+<p id="js"></p>
 </body>
 <script type="text/javascript">
 
@@ -28,8 +30,8 @@
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 7,
-            center: {lat: 41.879, lng: -87.624}
+            zoom: 18,
+            center: {lat: -45.9178179833, lng:170.4764674}
         });
         var centerControlDiv = document.createElement('div');
         var centerControl = new CenterControl(centerControlDiv, map);
@@ -67,9 +69,12 @@
             google.maps.event.addListener(marker, 'drag', function(event) {
 //                console.log('drag');
 
-                var a = {};
-                a.lat = event.latLng.lat();
-                a.lng = event.latLng.lng();
+//                var a = {};
+//                a.lat = event.latLng.lat();
+//                a.lng = event.latLng.lng();
+                var a = [];
+                a[0] = event.latLng.lat();
+                a[1] = event.latLng.lng();
                 arr.push(a);
                 path = poly.getPath();
                 path.push(event.latLng);
@@ -115,13 +120,34 @@
 
         // Setup the click event listeners: simply set the map to Chicago.
         controlUI.addEventListener('click', function() {
-            map.setCenter(chicago);
+//            map.setCenter(chicago);
             console.log(arr);
             for(var i = 0 ; i < markerArr.length ; i++){
                 markerArr[i].setMap(null)
             }
-//            makeMark = null;
-//            map.setCustomValidity()
+
+            $.ajax({
+                type:"get",
+                url:"http://47.90.23.150/index.php/Home/Index/searchMaps?coordinates=" + arr,
+                async:true,
+                success:function(data){
+//                    console.log(typeof data);
+                    console.log(data);
+//                    console.log(JSON.parse(data));
+                    var allHouse = JSON.parse(data);
+                    for(var j = 0 ; j < allHouse.length ; j++){
+                        (function(){
+                            console.log(j)
+                            var marker = new google.maps.Marker({
+                                position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
+//                                position:{lat: -45.9178179833, lng:170.4764674},
+                                map: map,
+                                title:allHouse[j].address
+                            });
+                        })(j)
+                    }
+                }
+            });
         });
 
     }

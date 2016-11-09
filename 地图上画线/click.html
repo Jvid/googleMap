@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画线</title>
+    <style type="text/css">
+        #map{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+        }
+        .map-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            background:#fff;
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+    </style>
+</head>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-2.1.1.js"></script>
+<body onload="initMap()">
+<div id="map"></div>
+<p id="js"></p>
+</body>
+<script type="text/javascript">
+
+    //    var poly;
+    var map;
+    var markerArr=[];
+    var arr = [];
+    var makeMark;
+    var tempDataArr;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: {lat: -45.9178179833, lng:170.4764674}
+        });
+        map.addListener('click',function(e){
+            makeMark(e);
+        })
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+    }
+
+    //划线
+        var image = 'pen.png';
+        var marker;
+        var oldstr;
+        var testArr = arr;
+    //划线后提交数据并请求数据
+    function drawLineData(){
+
+        for(var t = 0 ; t < testArr.length ; t++){
+            (function(){
+                console.log(t);
+                var markerHouse = new google.maps.Marker({
+                    position: {lat:testArr[t][0], lng:testArr[t][1]},
+//                                position:{lat: -45.9178179833, lng:170.4764674},
+                    map: map,
+                    title:'第' + t +'个标记'
+                });
+            })(t);
+        };
+
+
+       /* var strData = JSON.stringify(arr);
+        console.log(strData);
+        //每次都进行一次临时存储,如果用户传入的坐标小于十个这样的话就会显示原来的值
+        map.removeListener(drawEvent);
+        console.log(drawEvent)
+        tempDataArr = JSON.parse(strData);
+        if(arr.length<10){
+            oldstr = JSON.stringify(tempDataArr);
+        }else{
+            oldstr = strData;
+        }
+        $.ajax({
+            type:"get",
+            url:"http://47.90.23.150/index.php/Home/Index/searchMaps?coordinates=" + oldstr,
+            async:true,
+            success:function(data){
+                arr = [];
+                    console.log(typeof data);
+                console.log(data);
+//                    console.log(JSON.parse(data));
+                var allHouse = JSON.parse(data);
+                for(var j = 0 ; j < allHouse.length ; j++){
+                    (function(){
+                        console.log(j);
+                        var markerHouse = new google.maps.Marker({
+                            position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
+//                                position:{lat: -45.9178179833, lng:170.4764674},
+                            map: map,
+                            title:allHouse[j].address
+                        });
+                    })(j);
+                }
+            }
+        });*/
+    }
+
+
+
+
+
+
+    var drawEvent;
+    function CenterControl(controlDiv, map) {
+        var controlUI = document.createElement('div');
+        //通过添加类名在样式中设置这个空件的样式
+        controlUI.className = 'map-btn';
+        controlUI.title = 'Click to draw';
+        controlUI.innerHTML = 'Draw start';
+        controlDiv.appendChild(controlUI);
+
+        controlUI.addEventListener('click', function() {
+            if(controlUI.innerHTML == 'Draw start'){
+                //点击开始画折线
+                controlUI.innerHTML = 'Draw end';
+                makeMark = function (event) {
+                    var location = event.latLng;
+                    var temp;
+                    var path;
+                    marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        icon: image,
+                        draggable: true
+                    });
+                    markerArr.push(marker);
+                    var poly = new google.maps.Polyline({
+                        strokeColor: '#000000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 3
+                    });
+                    poly.setMap(map);
+                    google.maps.event.addListener(marker, 'dragstart', function(event) {
+                        console.log('start');
+                        temp = event.latLng;
+                    });
+
+                    google.maps.event.addListener(marker, 'drag', function(event) {
+//                console.log('drag');
+                        //传对象
+//                var a = {};
+//                a.lat = event.latLng.lat();
+//                a.lng = event.latLng.lng();
+                        //传数组
+                        var a = [];
+                        a[0] = event.latLng.lat();
+                        a[1] = event.latLng.lng();
+                        arr.push(a);
+                        path = poly.getPath();
+                        path.push(event.latLng);
+
+                    });
+
+                    google.maps.event.addListener(marker, 'dragend', function(event) {
+                        for(var k = 0 ; k < markerArr.length ; k++){
+                            markerArr[k].setMap(null);
+                        }
+//                marker.setMap(null);
+                        console.log('dragend');
+                        google.maps.event.clearInstanceListeners(marker);
+                        arr.push(arr[0]);
+                        var path = poly.getPath();
+                        path.push(temp);
+                    });
+
+                }
+            }else{
+                //画完折线
+                controlUI.innerHTML = 'Draw start';
+                makeMark = function(e){
+
+                }
+                console.log(2);
+                console.log(arr);
+                drawLineData();
+            }
+            for(var i = 0 ; i < markerArr.length ; i++){
+                markerArr[i].setMap(null);
+            }
+        });
+
+    }
+
+
+
+
+</script>
+</html>
