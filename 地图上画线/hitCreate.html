@@ -127,9 +127,10 @@
             }
 
             $.ajax({
-                type:"get",
-                url:"http://47.90.23.150/index.php/Home/Index/searchMaps?coordinates=" + arr,
+                type:"post",
+                url:"http://47.90.23.150/index.php/Home/Index/searchMaps",
                 async:true,
+                data:{'coordinates':arr},
                 success:function(data){
 //                    console.log(typeof data);
                     console.log(data);

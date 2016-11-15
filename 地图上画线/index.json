@@ -1,0 +1,242 @@
+[
+  {
+    "_id": "580711df4860e40bb23c9f1d",
+    "address": "20 McGowan Road",
+    "base_point": [
+      174.697989967,
+      -37.2272189333
+    ]
+  },
+  {
+    "_id": "580711df4860e40bb23c9f24",
+    "address": "59 Hihi Beach Road",
+    "base_point": [
+      173.538945533,
+      -34.9691718333
+    ]
+  },
+  {
+    "_id": "580711df4860e40bb23c9f32",
+    "address": "272 Black Jack Road",
+    "base_point": [
+      175.7409865,
+      -36.713114
+    ]
+  },
+  {
+    "_id": "580711df4860e40bb23c9f12",
+    "address": "59 Slater Street",
+    "base_point": [
+      172.65289805,
+      -43.5141421167
+    ]
+  },
+  {
+    "_id": "580711df4860e40bb23c9f18",
+    "address": "148 Woodham Road",
+    "base_point": [
+      172.671229767,
+      -43.5253163333
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23c9fd6",
+    "address": "51D Wapiti Avenue",
+    "base_point": [
+      175.547610783,
+      -40.19767245
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23c9fed",
+    "address": "36A Exe Street",
+    "base_point": [
+      170.9722526,
+      -45.09087225
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23ca007",
+    "address": "78 Waituna Road",
+    "base_point": [
+      175.95281135,
+      -40.4147482
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23ca00f",
+    "address": "94 Puriri Valley Road",
+    "base_point": [
+      175.6459786,
+      -37.2251152667
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23ca016",
+    "address": "76 Cheviot Heights",
+    "base_point": [
+      173.23854895,
+      -42.7896294
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca01f",
+    "address": "11 Hihi Beach Road",
+    "base_point": [
+      173.5401806,
+      -34.97271535
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca036",
+    "address": "173 Penrose Road",
+    "base_point": [
+      174.827984033,
+      -36.9084033
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca038",
+    "address": "123 Heald Road",
+    "base_point": [
+      175.05610425,
+      -37.0833904833
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca03c",
+    "address": "9 Hihi Beach Road",
+    "base_point": [
+      173.540503933,
+      -34.9725380667
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca04b",
+    "address": "15 Marlin Place",
+    "base_point": [
+      175.898948933,
+      -37.2822737167
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca054",
+    "address": "35 Hihi Beach Road",
+    "base_point": [
+      173.5392529,
+      -34.9718473833
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca05b",
+    "address": "53 Church Lane",
+    "base_point": [
+      173.539918083,
+      -41.5557972
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca066",
+    "address": "115 Hoffman Street",
+    "base_point": [
+      170.978230233,
+      -42.7201587167
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca079",
+    "address": "1001 Kaitaia-Awaroa Road",
+    "base_point": [
+      173.1972393,
+      -35.1679722333
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca07b",
+    "address": "17 Hilton Road",
+    "base_point": [
+      175.513208617,
+      -41.0414679333
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca087",
+    "address": "857 Black Jack Road",
+    "base_point": [
+      175.792933967,
+      -36.7140263833
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca098",
+    "address": "14 Hihi Beach Road",
+    "base_point": [
+      173.540737867,
+      -34.9723212667
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca0aa",
+    "address": "2 Marlin Place",
+    "base_point": [
+      175.899553233,
+      -37.28165715
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca0b2",
+    "address": "15 Tavern Lane",
+    "base_point": [
+      175.90046885,
+      -37.2817292167
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca0f8",
+    "address": "112 Farmer Crescent",
+    "base_point": [
+      174.965778933,
+      -41.1677227167
+    ]
+  },
+  {
+    "_id": "580711e14860e40bb23c9fe1",
+    "address": "49B Cuttance Road",
+    "base_point": [
+      168.915489883,
+      -43.9014567
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca02e",
+    "address": "33 Korora Road",
+    "base_point": [
+      175.008012117,
+      -36.7771644333
+    ]
+  },
+  {
+    "_id": "580711e24860e40bb23ca03a",
+    "address": "27C Usk Street",
+    "base_point": [
+      170.971688767,
+      -45.0936026833
+    ]
+  },
+  {
+    "_id": "5807195d4860e40bb251f3b3",
+    "address": "1/64 Logan Avenue",
+    "base_point": [
+      176.066676783,
+      -38.7343068667
+    ]
+  },
+  {
+    "_id": "5807195d4860e40bb251f3b4",
+    "address": "62B Logan Avenue",
+    "base_point": [
+      176.066347483,
+      -38.7341478667
+    ]
+  }
+]

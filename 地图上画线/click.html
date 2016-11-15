@@ -24,36 +24,61 @@
             margin-bottom: 22px;
             text-align: center;
         }
+        .map-clear-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            margin-left: 5px;
+            background:#fff;
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
     </style>
 </head>
-<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="jquery-2.1.1.js"></script>
 <body onload="initMap()">
 <div id="map"></div>
 <p id="js"></p>
 </body>
 <script type="text/javascript">
-
-    //    var poly;
     var map;
     var markerArr=[];
     var arr = [];
     var makeMark;
     var tempDataArr;
+    var innerHouseArr = [];
+//    var allHouse
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 13,
-            center: {lat: -45.9178179833, lng:170.4764674}
+            zoom: 17,
+            center: {lat: -41.2513936167, lng:174.9333381},
+            mapTypeId: google.maps.MapTypeId.SATELLITE
         });
         map.addListener('click',function(e){
-            makeMark(e);
+            if(makeMark instanceof Function){
+                makeMark(e);
+            }
+
         })
         var centerControlDiv = document.createElement('div');
         var centerControl = new CenterControl(centerControlDiv, map);
 
         centerControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+
+        var centerClearDiv = document.createElement('div');
+        var centerClear = new clearBtn(centerClearDiv, map);
+
+        centerClearDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerClearDiv);
+
     }
 
     //划线
@@ -63,62 +88,71 @@
         var testArr = arr;
     //划线后提交数据并请求数据
     function drawLineData(){
+       var n = parseInt(arr.length / 20);
+       var sliceArr = [];
 
-        for(var t = 0 ; t < testArr.length ; t++){
-            (function(){
-                console.log(t);
-                var markerHouse = new google.maps.Marker({
-                    position: {lat:testArr[t][0], lng:testArr[t][1]},
-//                                position:{lat: -45.9178179833, lng:170.4764674},
-                    map: map,
-                    title:'第' + t +'个标记'
-                });
-            })(t);
-        };
-
-
-       /* var strData = JSON.stringify(arr);
-        console.log(strData);
+        for(var d = 0 ; d < arr.length ; d = d + n ){
+            sliceArr.push(arr[d]);
+        }
+        console.log(sliceArr+'-----------------');
+       var strData = JSON.stringify(sliceArr);
+//        console.log(strData);
         //每次都进行一次临时存储,如果用户传入的坐标小于十个这样的话就会显示原来的值
-        map.removeListener(drawEvent);
-        console.log(drawEvent)
         tempDataArr = JSON.parse(strData);
+
         if(arr.length<10){
             oldstr = JSON.stringify(tempDataArr);
         }else{
             oldstr = strData;
         }
+
+        console.log(oldstr);
         $.ajax({
-            type:"get",
-            url:"http://47.90.23.150/index.php/Home/Index/searchMaps?coordinates=" + oldstr,
+            type:"post",
+            url:"http://47.90.23.150/index.php/Home/Index/searchMaps",
             async:true,
+            data:{'coordinates':oldstr},
             success:function(data){
-                arr = [];
-                    console.log(typeof data);
                 console.log(data);
-//                    console.log(JSON.parse(data));
+//                var allHouse = [{"_id":"580711df4860e40bb23c9f1d","address":"20 McGowan Road","base_point":[174.697989967,-37.2272189333]},{"_id":"580711df4860e40bb23c9f24","address":"59 Hihi Beach Road","base_point":[173.538945533,-34.9691718333]},{"_id":"580711df4860e40bb23c9f32","address":"272 Black Jack Road","base_point":[175.7409865,-36.713114]},{"_id":"580711df4860e40bb23c9f12","address":"59 Slater Street","base_point":[172.65289805,-43.5141421167]},{"_id":"580711df4860e40bb23c9f18","address":"148 Woodham Road","base_point":[172.671229767,-43.5253163333]},{"_id":"580711e14860e40bb23c9fd6","address":"51D Wapiti Avenue","base_point":[175.547610783,-40.19767245]},{"_id":"580711e14860e40bb23c9fed","address":"36A Exe Street","base_point":[170.9722526,-45.09087225]},{"_id":"580711e14860e40bb23ca007","address":"78 Waituna Road","base_point":[175.95281135,-40.4147482]},{"_id":"580711e14860e40bb23ca00f","address":"94 Puriri Valley Road","base_point":[175.6459786,-37.2251152667]},{"_id":"580711e14860e40bb23ca016","address":"76 Cheviot Heights","base_point":[173.23854895,-42.7896294]},{"_id":"580711e24860e40bb23ca01f","address":"11 Hihi Beach Road","base_point":[173.5401806,-34.97271535]},{"_id":"580711e24860e40bb23ca036","address":"173 Penrose Road","base_point":[174.827984033,-36.9084033]},{"_id":"580711e24860e40bb23ca038","address":"123 Heald Road","base_point":[175.05610425,-37.0833904833]},{"_id":"580711e24860e40bb23ca03c","address":"9 Hihi Beach Road","base_point":[173.540503933,-34.9725380667]},{"_id":"580711e24860e40bb23ca04b","address":"15 Marlin Place","base_point":[175.898948933,-37.2822737167]},{"_id":"580711e24860e40bb23ca054","address":"35 Hihi Beach Road","base_point":[173.5392529,-34.9718473833]},{"_id":"580711e24860e40bb23ca05b","address":"53 Church Lane","base_point":[173.539918083,-41.5557972]},{"_id":"580711e24860e40bb23ca066","address":"115 Hoffman Street","base_point":[170.978230233,-42.7201587167]},{"_id":"580711e24860e40bb23ca079","address":"1001 Kaitaia-Awaroa Road","base_point":[173.1972393,-35.1679722333]},{"_id":"580711e24860e40bb23ca07b","address":"17 Hilton Road","base_point":[175.513208617,-41.0414679333]},{"_id":"580711e24860e40bb23ca087","address":"857 Black Jack Road","base_point":[175.792933967,-36.7140263833]},{"_id":"580711e24860e40bb23ca098","address":"14 Hihi Beach Road","base_point":[173.540737867,-34.9723212667]},{"_id":"580711e24860e40bb23ca0aa","address":"2 Marlin Place","base_point":[175.899553233,-37.28165715]},{"_id":"580711e24860e40bb23ca0b2","address":"15 Tavern Lane","base_point":[175.90046885,-37.2817292167]},{"_id":"580711e24860e40bb23ca0f8","address":"112 Farmer Crescent","base_point":[174.965778933,-41.1677227167]},{"_id":"580711e14860e40bb23c9fe1","address":"49B Cuttance Road","base_point":[168.915489883,-43.9014567]},{"_id":"580711e24860e40bb23ca02e","address":"33 Korora Road","base_point":[175.008012117,-36.7771644333]},{"_id":"580711e24860e40bb23ca03a","address":"27C Usk Street","base_point":[170.971688767,-45.0936026833]},{"_id":"5807195d4860e40bb251f3b3","address":"1\/64 Logan Avenue","base_point":[176.066676783,-38.7343068667]},{"_id":"5807195d4860e40bb251f3b4","address":"62B Logan Avenue","base_point":[176.066347483,-38.7341478667]}]
                 var allHouse = JSON.parse(data);
+                console.log(allHouse)
+                arr = [];
+
+                if( allHouse == 100101 ){
+                    alert('这个范围内没有房源');
+                    return;
+                }
+
                 for(var j = 0 ; j < allHouse.length ; j++){
                     (function(){
-                        console.log(j);
                         var markerHouse = new google.maps.Marker({
                             position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
-//                                position:{lat: -45.9178179833, lng:170.4764674},
                             map: map,
                             title:allHouse[j].address
                         });
+                        innerHouseArr.push(markerHouse);
                     })(j);
                 }
             }
-        });*/
+        });
     }
 
 
 
+    function clearBtn(centerClearDiv,map){
+        var clearUI = document.createElement('div');
+        //通过添加类名在样式中设置这个空件的样式
+        clearUI.className = 'map-clear-btn';
+        clearUI.title = 'Clear all';
+        clearUI.innerHTML = 'Clear';
+        centerClearDiv.appendChild(clearUI);
 
+        clearUI.addEventListener('click', function() {
+            initMap();
+        })
+    }
 
-
-    var drawEvent;
     function CenterControl(controlDiv, map) {
         var controlUI = document.createElement('div');
         //通过添加类名在样式中设置这个空件的样式
@@ -128,9 +162,21 @@
         controlDiv.appendChild(controlUI);
 
         controlUI.addEventListener('click', function() {
+            document.getElementById('map').style.cursor = 'crosshair';
             if(controlUI.innerHTML == 'Draw start'){
+
+                //清楚现在地图上已经有的点
+                if(innerHouseArr.length != 0){
+                    for(var m = 0 ; m < innerHouseArr.length ; m++){
+                        innerHouseArr[m].setMap(null);
+                    }
+                    innerHouseArr = [];
+                }
+
+
                 //点击开始画折线
                 controlUI.innerHTML = 'Draw end';
+//                initMap();
                 makeMark = function (event) {
                     var location = event.latLng;
                     var temp;
@@ -154,15 +200,10 @@
                     });
 
                     google.maps.event.addListener(marker, 'drag', function(event) {
-//                console.log('drag');
-                        //传对象
-//                var a = {};
-//                a.lat = event.latLng.lat();
-//                a.lng = event.latLng.lng();
                         //传数组
                         var a = [];
-                        a[0] = event.latLng.lat();
-                        a[1] = event.latLng.lng();
+                        a[1] = event.latLng.lat();
+                        a[0] = event.latLng.lng();
                         arr.push(a);
                         path = poly.getPath();
                         path.push(event.latLng);
@@ -173,23 +214,18 @@
                         for(var k = 0 ; k < markerArr.length ; k++){
                             markerArr[k].setMap(null);
                         }
-//                marker.setMap(null);
-                        console.log('dragend');
                         google.maps.event.clearInstanceListeners(marker);
                         arr.push(arr[0]);
                         var path = poly.getPath();
                         path.push(temp);
+                        makeMark = 1;
                     });
 
                 }
             }else{
                 //画完折线
                 controlUI.innerHTML = 'Draw start';
-                makeMark = function(e){
-
-                }
-                console.log(2);
-                console.log(arr);
+                makeMark = 1;
                 drawLineData();
             }
             for(var i = 0 ; i < markerArr.length ; i++){
@@ -203,4 +239,6 @@
 
 
 </script>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+
 </html>

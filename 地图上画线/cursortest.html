@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画线</title>
+    <style type="text/css">
+        html,body{
+            margin: 0;
+            padding:0;
+        }
+        #mapWrap{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+            position: relative;
+        }
+        #map{
+            width: 100%;
+            height:100%;
+        }
+        #coverDiv{
+            position: absolute;
+            left: 0;
+            top:0;
+            width: 100%;
+            height:100%;
+            display: none;
+            cursor: crosshair;
+        }
+        .map-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            background:rgba(101,254,180,0.7);
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .map-clear-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            margin-left: 5px;
+            background:rgba(101,254,180,0.7);
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .golineWrap{
+            width: 250px;
+            height: 30px;
+            background: rgba(255,255,255,0.5);
+            margin: 40px 0 0 30px;
+            display: none;
+        }
+        .golineWrap p{
+            width: 250px;
+            letter-spacing: 3px;
+            text-align: center;
+            line-height:0;
+        }
+        .goline{
+            width: 250px;
+            height: 10px;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .innerline{
+            height: 10px;
+            width: 130px;
+            border-radius: 10px;
+            background: rgba(254,51,18,0.8);
+        }
+
+    </style>
+</head>
+<script type="text/javascript" src="jquery-2.1.1.js"></script>
+<body onload="initMap()">
+<div id="mapWrap">
+    <div id="map"></div>
+    <!--<div id="coverDiv"></div>-->
+</div>
+
+</body>
+<script type="text/javascript">
+    /*
+     1、地图上划线，首先在页面加载的时候创建一副地图
+     2、在地图上创建两个控件，Draw和clear
+     3、给两个控件添加事件
+     Draw添加点击事件，点击后地图添加点击事件穿件mark，地图添加划线时间，结束之后把地图添加的点击事件取消
+     clear添加点击事件，刷新地图
+     */
+    var map;
+    var markerArr=[];
+    var arr = [];
+    var makeMark = 1;
+    var tempDataArr;
+    var innerHouseArr = [];
+    var image = 'pen.png';
+    var marker;
+    var oldstr;
+    var poly;
+    var path;
+    var te = 1;
+    var tempArr=[];
+    //创建draw，并规定形式
+    var drawDiv = document.createElement('div');
+    drawDiv.className = 'map-btn';
+    var drawDis = {
+        divWrap : drawDiv,
+        divTitle:'click to draw',
+        divContent:'Draw'
+    }
+    //创建clear，并规定形式
+    var clearDiv = document.createElement('div');
+    clearDiv.className = 'map-clear-btn'
+    var clearDis = {
+        divWrap : clearDiv,
+        divTitle:'Remove outline',
+        divContent:'Remove outline'
+    }
+    //创建一个draw、clear控件并放在地图上面中间部位
+    createBtn(drawDis);
+    createBtn(clearDis);
+
+    var golineDiv = document.createElement('div');
+    golineDiv.className = 'golineWrap';
+    $(golineDiv).append($('<p>正在查询...</p>'));
+    var goLine = document.createElement('div');
+    goLine.className = 'goline';
+    var innerLine = document.createElement('div');
+    innerLine.className = 'innerline';
+    goLine.appendChild(innerLine);
+    golineDiv.appendChild(goLine);
+
+    //创建地图
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 17,
+            center: {lat: -41.2513936167, lng:174.9333381},
+            mapTypeId: google.maps.MapTypeId.SATELLITE,
+            draggable:false
+        });
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(drawDiv);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(clearDiv);
+        map.controls[google.maps.ControlPosition.LEFT_TOP].push(golineDiv);
+
+        map.addListener('mousedown',function(e){
+            console.log(te instanceof Function && makeMark instanceof Function)
+            if(te instanceof Function && makeMark instanceof Function){
+                poly = new google.maps.Polyline({
+                    strokeColor: '#000000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 3
+                });
+                map.addListener('mousemove',function(e){
+                    if(te instanceof Function && makeMark instanceof Function){
+                        te(e);
+                    }else{
+                        return
+                    }
+                })
+            }else{
+                return;
+            }
+
+
+            map.addListener('mouseup',function(){
+                console.log('mouseup')
+                makeMark = 1;
+                te = 1;
+                if(arr.length >=10) {
+                    arr.push(arr[0]);
+                    $(golineDiv).css({'display': 'block'})
+                    $(innerLine).animate({'width': 200}, 9000)
+                    drawLineData();
+                }else{
+                    return;
+                }
+            });
+
+        })
+    }
+    function createBtn(obj){
+        var makeUI = document.createElement('div');
+        makeUI.title = obj.divTitle;
+        makeUI.innerHTML = obj.divContent;
+        obj.divWrap.appendChild(makeUI);
+    }
+
+    drawDiv.addEventListener('click', function() {
+        $('#map').css({'cursor':'crosshair'})
+
+        drawDiv.style.background='rgba(252,137,118,0.7)'
+        //清楚现在地图上已经有的点
+        if(innerHouseArr.length != 0){
+            for(var m = 0 ; m < innerHouseArr.length ; m++){
+                innerHouseArr[m].setMap(null);
+            }
+            innerHouseArr = [];
+        }
+
+        if(poly){
+            poly.setMap(null);
+        }
+        te = function (event) {
+            arr.push(event.latLng)
+            var a = [];
+            a[1] = event.latLng.lat();
+            a[0] = event.latLng.lng();
+            arr.push(a);
+            //传数组
+            path = poly.getPath();
+            path.push(event.latLng);
+            poly.setMap(map);
+        }
+
+        makeMark = function(){
+            console.log('a');
+        }
+    })
+
+    clearDiv.addEventListener('click', function() {
+        if(poly){
+            poly.setMap(null);
+        }
+    })
+    //划线后提交数据并请求数据
+    function drawLineData(){
+        $.ajax({
+            type:"post",
+            url:"index.json",
+            async:true,
+            success:function(data){
+                console.log(data)
+                var allHouse = data;
+                $(innerLine).stop().animate({'width':250},50,function(){
+                    $(golineDiv).css({'display':'none'})
+                    $(innerLine).css({'width':130})
+                })
+                for(var j = 0 ; j < allHouse.length ; j++){
+                    var markerHouse = new google.maps.Marker({
+                        position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
+                        map: map,
+                        title:allHouse[j].address
+                    });
+                    innerHouseArr.push(markerHouse);
+                }
+
+
+//                $(innerLine).stop().animate({'width':250},50,function(){
+//                    $(golineDiv).css({'display':'none'})
+//                    $(innerLine).css({'width':130})
+//                })
+//                var allHouse = JSON.parse(data);
+//                makeMark = 1;
+//                arr = [];
+//                if( allHouse == 100101 ){
+//                    alert('这个范围内没有房源');
+//                    drawDiv.style.background='rgba(101,254,180,0.7)';
+//                    return;
+//                }
+//
+//                for(var j = 0 ; j < allHouse.length ; j++){
+//                    (function(){
+//                        var markerHouse = new google.maps.Marker({
+//                            position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
+//                            map: map,
+//                            title:allHouse[j].address
+//                        });
+//                        innerHouseArr.push(markerHouse);
+//                    })(j);
+//                }
+//                drawDiv.style.background='rgba(101,254,180,0.7)';
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+//        var n = parseInt(arr.length / 20);
+//        var sliceArr = [];
+//
+//        for(var d = 0 ; d < arr.length ; d = d + n ){
+//            sliceArr.push(arr[d]);
+//        }
+//        var strData = JSON.stringify(sliceArr);
+//        //每次都进行一次临时存储,如果用户传入的坐标小于十个这样的话就会显示原来的值
+//        tempDataArr = JSON.parse(strData);
+//
+//        if(arr.length<10){
+//            oldstr = JSON.stringify(tempDataArr);
+//        }else{
+//            oldstr = strData;
+//        }
+//        $.ajax({
+//            type:"post",
+//            url:"http://47.90.23.150/index.php/Home/Index/searchMaps",
+//            async:true,
+//            data:{'coordinates':oldstr},
+//            success:function(data){
+//                $(innerLine).stop().animate({'width':250},50,function(){
+//                    $(golineDiv).css({'display':'none'})
+//                    $(innerLine).css({'width':130})
+//                })
+//                var allHouse = JSON.parse(data);
+//                makeMark = 1;
+//                arr = [];
+//                if( allHouse == 100101 ){
+//                    alert('这个范围内没有房源');
+//                    drawDiv.style.background='rgba(101,254,180,0.7)';
+//                    return;
+//                }
+//
+//                for(var j = 0 ; j < allHouse.length ; j++){
+//                    (function(){
+//                        var markerHouse = new google.maps.Marker({
+//                            position: {lat:allHouse[j].base_point[1], lng:allHouse[j].base_point[0]},
+//                            map: map,
+//                            title:allHouse[j].address
+//                        });
+//                        innerHouseArr.push(markerHouse);
+//                    })(j);
+//                }
+//                drawDiv.style.background='rgba(101,254,180,0.7)';
+//            }
+//        });
+    }
+
+
+</script>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+
+</html>

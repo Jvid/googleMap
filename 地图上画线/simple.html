@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>地图上画线</title>
+    <style type="text/css">
+        html,body{
+            margin: 0;
+            padding:0;
+        }
+        #mapWrap{
+            width: 1100px;
+            height:550px;
+            margin: 20px auto;
+            border:1px solid gray;
+            position: relative;
+        }
+        #map{
+            width: 100%;
+            height:100%;
+        }
+        .map-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            background:rgba(101,254,180,0.7);
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .map-clear-btn{
+            color:rgb(25,25,25);
+            font-family: Roboto,Arial,sans-serif;
+            line-height: 38px;
+            font-size:16px;
+            padding: 0 5px;
+            margin-left: 5px;
+            background:rgba(101,254,180,0.7);
+            border:2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            cursor: pointer;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .golineWrap{
+            width: 250px;
+            height: 30px;
+            background: rgba(255,255,255,0.5);
+            margin: 40px 0 0 30px;
+            display: none;
+        }
+        .golineWrap p{
+            width: 250px;
+            letter-spacing: 3px;
+            text-align: center;
+            line-height:0;
+        }
+        .goline{
+            width: 250px;
+            height: 10px;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .innerline{
+            height: 10px;
+            width: 130px;
+            border-radius: 10px;
+            background: rgba(254,51,18,0.8);
+        }
+
+    </style>
+</head>
+<script type="text/javascript" src="jquery-2.1.1.js"></script>
+<body onload="initMap()">
+<div id="mapWrap">
+    <div id="map"></div>
+</div>
+
+</body>
+<script type="text/javascript">
+    /*
+     1、地图上划线，首先在页面加载的时候创建一副地图
+     2、在地图上创建两个控件，Draw和clear
+     3、给两个控件添加事件
+     Draw添加点击事件，点击后地图添加点击事件穿件mark，地图添加划线时间，结束之后把地图添加的点击事件取消
+     clear添加点击事件，刷新地图
+     */
+
+    var infObj = {
+        arr : [],
+        tempDataArr : [],
+        innerHouseArr : [],
+        oldstr : '',
+        drawDiv : document.createElement('div'),
+        clearDiv : document.createElement('div')
+    };
+
+
+    infObj.drawDis = {
+        divWrap : infObj.drawDiv,
+        divTitle:'click to draw',
+        divContent:'Draw'
+    };
+    infObj.clearDis = {
+        divWrap : infObj.clearDiv,
+        divTitle:'Remove outline',
+        divContent:'Remove outline'
+    };
+    infObj.drawDiv.className = 'map-btn';
+    infObj.clearDiv.className = 'map-clear-btn';
+    createBtn(infObj.drawDis);
+    createBtn(infObj.clearDis);
+
+    var golineDiv = document.createElement('div');
+    golineDiv.className = 'golineWrap';
+    $(golineDiv).append($('<p>正在查询...</p>'));
+    var goLine = document.createElement('div');
+    goLine.className = 'goline';
+    var innerLine = document.createElement('div');
+    innerLine.className = 'innerline';
+    goLine.appendChild(innerLine);
+    golineDiv.appendChild(goLine);
+    //创建地图
+    function initMap() {
+
+        var initInfo = {
+            zoom: 17,
+            center: {lat: -41.2513936167, lng:174.9333381},
+            mapTypeId: google.maps.MapTypeId.SATELLITE,
+            draggable:true
+        };
+        infObj.map = new google.maps.Map(document.getElementById('map'), initInfo);
+        infObj.map.controls[google.maps.ControlPosition.TOP_CENTER].push(infObj.drawDiv);
+        infObj.map.controls[google.maps.ControlPosition.TOP_CENTER].push(infObj.clearDiv);
+        infObj.map.controls[google.maps.ControlPosition.LEFT_TOP].push(infObj.golineDiv);
+    }
+
+    function createBtn(obj){
+        var makeUI = document.createElement('div');
+        makeUI.title = obj.divTitle;
+        makeUI.innerHTML = obj.divContent;
+        obj.divWrap.appendChild(makeUI);
+    }
+
+    infObj.drawDiv.addEventListener('click', function() {
+        $('#map').css({'cursor':'crosshair'});
+        infObj.drawDiv.style.background='rgba(252,137,118,0.7)';
+        //清楚现在地图上已经有的点
+        if(infObj.innerHouseArr.length != 0){
+            for(var m = 0 ; m < infObj.innerHouseArr.length ; m++){
+                infObj.innerHouseArr[m].setMap(null);
+            }
+            infObj.innerHouseArr = [];
+        }
+        infObj.map.draggable = false;
+        if(infObj.poly){
+            infObj.poly.setMap(null);
+        }
+        infObj.mapDown = google.maps.event.addListener(infObj.map, 'mousedown', function(event){
+            infObj.temp = event.latLng;
+            infObj.poly = new google.maps.Polyline({
+                strokeColor: '#000000',
+                strokeOpacity: 1.0,
+                strokeWeight: 3
+            });
+            infObj.mapMove = google.maps.event.addListener(infObj.map, 'mousemove', function(event){
+                var a = [];
+                a[1] = event.latLng.lat();
+                a[0] = event.latLng.lng();
+                infObj.arr.push(a);
+                //传数组
+                infObj.path = infObj.poly.getPath();
+                infObj.path.push(event.latLng);
+                infObj.poly.setMap(infObj.map);
+            });
+
+        });
+        infObj.mapUp = google.maps.event.addListener(infObj.map,'mouseup',function(){
+            console.log('up');
+            google.maps.event.removeListener(infObj.mapDown);
+            google.maps.event.removeListener(infObj.mapMove);
+            google.maps.event.removeListener(infObj.mapUp);
+            infObj.path = infObj.poly.getPath();
+            infObj.path.push(infObj.temp);
+            infObj.poly.setMap(infObj.map);
+            if(infObj.arr.length >=10) {
+                $(infObj.golineDiv).css({'display': 'block'})
+                $(infObj.innerLine).animate({'width': 200}, 9000)
+                drawLineData();
+            }else{
+                alert('您画的范围太小了,请重新画')
+                infObj.drawDiv.style.background='rgba(101,254,180,0.7)';
+            }
+
+        });
+    });
+
+    infObj.clearDiv.addEventListener('click', function() {
+        if(infObj.poly){
+            infObj.poly.setMap(null);
+        }
+    });
+    //划线后提交数据并请求数据
+    function drawLineData(){
+        $.ajax({
+            type:"post",
+            url:"index.json",
+            async:true,
+            success:function(data){
+                console.log(data);
+                $(infObj.innerLine).stop().animate({'width':250},50,function(){
+                    $(infObj.golineDiv).css({'display':'none'})
+                    $(infObj.innerLine).css({'width':130})
+                });
+                infObj.allHouse = data;
+                if( infObj.allHouse == 100101 ){
+                    alert('这个范围内没有房源');
+                    infObj.drawDiv.style.background='rgba(101,254,180,0.7)';
+                    return;
+                }
+                for(var j = 0 ; j < infObj.allHouse.length ; j++){
+                    markerHouse = new google.maps.Marker({
+                        position: {lat:infObj.allHouse[j].base_point[1], lng:infObj.allHouse[j].base_point[0]},
+                        map: infObj.map,
+                        title:infObj.allHouse[j].address
+                    });
+                    infObj.innerHouseArr.push(markerHouse);
+                }
+                infObj.drawDiv.style.background='rgba(101,254,180,0.7)';
+                infObj.map.draggable = true;
+                google.maps.event.removeListener(infObj.mapUp);
+                $('#map').css({'cursor':'default'});
+            }
+        });
+    }
+</script>
+<script src="http://ditu.google.cn/maps/api/js?key=AIzaSyANJd8LvehOZALjsjZnRj8XsK9egZqSNek&sensor=false" type="text/javascript" charset="utf-8"></script>
+
+</html>
